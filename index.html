@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Origins - Promoter ou Excursionista Oficial</title>
+    <style>
+      /* ========================================
+         🎨 CONFIGURAÇÕES DE FONTE - ALTERE AQUI
+         ======================================== */
+      @font-face {
+        font-family: "Genera SemiBold"; /* ← ALTERAR NOME DA FONTE AQUI (deve coincidir com TEXT_FONT) */
+        font-style: normal;
+        font-weight: normal;
+        src: local("Genera SemiBold"),
+          url("assets/fonts/Genera-SemiBold.woff") format("woff"); /* ← ALTERAR ARQUIVO DA FONTE AQUI */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Arial, sans-serif;
+        background: url("assets/images/BG PAGE.png") center center/cover
+          no-repeat;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: rgba(0, 0, 0, 0.75);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        max-width: 600px;
+        width: 100%;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        color: #ffd700;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 28px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      .privacy-note {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .privacy-note strong {
+        font-size: 16px;
+      }
+
+      .form-section {
+        margin-bottom: 25px;
+      }
+
+      .form-section h3 {
+        color: #9966ff;
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .upload-area {
+        border: 3px dashed #9966ff;
+        border-radius: 15px;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+        backdrop-filter: blur(5px);
+      }
+
+      .upload-area:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: #ffd700;
+      }
+
+      .upload-area.dragover {
+        background: rgba(255, 215, 0, 0.1);
+        border-color: #ffd700;
+      }
+
+      .upload-icon {
+        font-size: 48px;
+        color: #ffd700;
+        margin-bottom: 10px;
+      }
+
+      .upload-text {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .upload-subtext {
+        color: #cccccc;
+        font-size: 14px;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid rgba(153, 102, 255, 0.5);
+        border-radius: 10px;
+        font-size: 16px;
+        resize: vertical;
+        min-height: 120px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Arial, sans-serif;
+        transition: border-color 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        backdrop-filter: blur(5px);
+      }
+
+      textarea::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: #ffd700;
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .info-text {
+        font-size: 14px;
+        color: #cccccc;
+        margin-top: 5px;
+      }
+
+      #preview {
+        text-align: center;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      #resultCanvas {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-decoration: none;
+        margin: 0 10px;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .button:active {
+        transform: translateY(0);
+      }
+
+      .button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .button-secondary {
+        background: #6c757d;
+      }
+
+      .buttons {
+        text-align: center;
+        display: none;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #764ba2;
+        font-size: 18px;
+      }
+
+      .error {
+        background: #fee;
+        color: #c33;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .lote-info {
+        background: #f3e5f5;
+        color: #764ba2;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎭 Origins - Arte Cultura e Resistência</h1>
+      <p class="subtitle">
+        Crie sua arte de Promoter ou Excursionista Oficial em segundos!
+      </p>
+
+      <div class="privacy-note">
+        <strong>🔒 100% Seguro</strong><br />
+        Suas fotos são processadas apenas no seu navegador.<br />
+        Nenhuma imagem é enviada ou armazenada!
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="form-section">
+        <h3>📸 1. Envie sua foto</h3>
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">Clique ou arraste sua foto aqui</div>
+          <div class="upload-subtext">Formatos aceitos: JPG, PNG, WEBP</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" />
+      </div>
+
+      <div class="form-section">
+        <h3>📝 2. Preencha suas informações</h3>
+        <div class="lote-info">🎫 Lote Promocional - R$ 60,00</div>
+        <textarea
+          id="infoText"
+          placeholder="Nome Sobrenome
+Cidade - Estado
+(11) 99999-9999"
+          maxlength="200"
+        ></textarea>
+        <p class="info-text">
+          Digite uma informação por linha (máx. 2 nomes na primeira linha)
+        </p>
+      </div>
+
+      <button class="button" id="generateBtn" disabled>🎨 Gerar Arte</button>
+
+      <div class="loading" id="loading">Processando sua arte...</div>
+
+      <div id="preview">
+        <canvas id="resultCanvas"></canvas>
+      </div>
+
+      <div class="buttons" id="buttons">
+        <button class="button" id="downloadBtn">💾 Baixar Arte</button>
+        <button class="button button-secondary" id="newArtBtn">
+          🎨 Criar Nova Arte
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ========================================
+      // 🎨 CONFIGURAÇÕES EDITÁVEIS - ALTERE AQUI
+      // ========================================
+
+      // 📁 CAMINHOS DOS ARQUIVOS (altere os nomes se necessário)
+      const TEMPLATE_PATH = "assets/images/mockup-origins.png"; // ← ALTERAR NOME DO MOCKUP AQUI
+      const WHATSAPP_ICON_PATH = "assets/images/whatsapp_icon.png"; // ← ALTERAR ÍCONE WHATSAPP AQUI
+
+      // 🎫 INFORMAÇÕES DO LOTE (só aparece na interface, não no mockup)
+      const LOTE_NOME = "Lote Promocional"; // ← ALTERAR NOME DO LOTE AQUI
+      const LOTE_VALOR = "R$ 60,00"; // ← ALTERAR VALOR DO LOTE AQUI
+
+      // 📸 POSIÇÃO DA FOTO (círculo na arte) - FOTO FICA POR TRÁS DO MOCKUP
+      const PHOTO_CENTER_X = 544; // ← ALTERAR POSIÇÃO X DA FOTO AQUI
+      const PHOTO_CENTER_Y = 288; // ← ALTERAR POSIÇÃO Y DA FOTO AQUI
+      const PHOTO_RADIUS = 258; // ← ALTERAR TAMANHO DA FOTO AQUI
+
+      // 📝 CONFIGURAÇÕES DO TEXTO (retângulo na arte)
+      const TEXT_CENTER_X = 540; // ← ALTERAR POSIÇÃO X DO TEXTO AQUI
+      const TEXT_Y = 1026; // ← ALTERAR POSIÇÃO Y DO TEXTO AQUI
+      const TEXT_COLOR = "#CDB160"; // ← ALTERAR COR DO TEXTO AQUI
+      const TEXT_FONT = "Genera SemiBold"; // ← ALTERAR FONTE AQUI (deve coincidir com @font-face)
+      const TEXT_CONTAINER_WIDTH = 1026; // ← ALTERAR LARGURA DO RETÂNGULO AQUI
+      const TEXT_CONTAINER_HEIGHT = 753; // ← ALTERAR ALTURA DO RETÂNGULO AQUI
+
+      // 🎯 CONTROLES DE ALINHAMENTO DO TEXTO - ALTERE AQUI
+      const TEXT_VERTICAL_ALIGN = "center"; // ← ALTERAR: "top", "center", "bottom"
+      const TEXT_VERTICAL_OFFSET = -220; // ← ALTERAR: +100 (desce), -100 (sobe) - em pixels
+      const TEXT_HORIZONTAL_ALIGN = "center"; // ← ALTERAR: "left", "center", "right"
+      const TEXT_HORIZONTAL_OFFSET = 0; // ← ALTERAR: +50 (direita), -50 (esquerda) - em pixels
+
+      // 📐 SISTEMA PHOTOSHOP - MARGENS AUTOMÁTICAS E ESPAÇAMENTO
+      const CONTAINER_SAFETY_MARGIN = 0.95; // ← ALTERAR: 0.95 = 95% do espaço (5% de margem)
+      const AUTO_MARGIN_RATIO = 0.12; // ← ALTERAR: 0.15 = 15% do tamanho da fonte como margem
+      const LETTER_SPACING_RATIO = 0; // ← ALTERAR: 0.05 = 5% do tamanho da fonte como espaçamento
+
+      // 🔤 CONFIGURAÇÕES DE FONTE
+      const MIN_FONT_SIZE = 25; // ← ALTERAR TAMANHO MÍNIMO DA FONTE AQUI
+      const MAX_FONT_SIZE = 100; // ← ALTERAR TAMANHO MÁXIMO DA FONTE AQUI
+      const BASE_FONT_SIZE = 45; // ← ALTERAR TAMANHO BASE DA FONTE AQUI
+      const LINE_HEIGHT_RATIO = 1.25; // ← ALTERAR ESPAÇAMENTO ENTRE LINHAS AQUI
+
+      // ========================================
+      // 🔧 CÓDIGO FUNCIONAL - NÃO ALTERAR ABAIXO
+      // ========================================
+
+      // Elementos do DOM
+      const uploadArea = document.getElementById("uploadArea");
+      const fileInput = document.getElementById("fileInput");
+      const infoText = document.getElementById("infoText");
+      const generateBtn = document.getElementById("generateBtn");
+      const preview = document.getElementById("preview");
+      const canvas = document.getElementById("resultCanvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+      const loading = document.getElementById("loading");
+      const buttons = document.getElementById("buttons");
+      const error = document.getElementById("error");
+
+      let templateImg = null;
+      let userImage = null;
+      let whatsappIcon = null;
+
+      // Carregar recursos ao iniciar
+      window.addEventListener("load", () => {
+        // Carregar template
+        templateImg = new Image();
+        templateImg.onload = () => {
+          console.log("Template carregado com sucesso!");
+        };
+        templateImg.onerror = () => {
+          showError(
+            "Erro ao carregar o template. Verifique se o arquivo está na pasta correta."
+          );
+        };
+        templateImg.src = TEMPLATE_PATH;
+
+        // Carregar ícone do WhatsApp
+        whatsappIcon = new Image();
+        whatsappIcon.onload = () => {
+          console.log("Ícone do WhatsApp carregado!");
+        };
+        whatsappIcon.onerror = () => {
+          console.log(
+            "Ícone do WhatsApp não encontrado - continuando sem ícone"
+          );
+        };
+        whatsappIcon.src = WHATSAPP_ICON_PATH;
+      });
+
+      // Eventos de upload
+      uploadArea.addEventListener("click", () => fileInput.click());
+
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) {
+          handleImageUpload(file);
+        }
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleImageUpload(file);
+        }
+      });
+
+      // Habilitar botão quando houver imagem
+      function checkCanGenerate() {
+        generateBtn.disabled = !userImage;
+      }
+
+      function showError(message) {
+        error.textContent = message;
+        error.style.display = "block";
+        setTimeout(() => {
+          error.style.display = "none";
+        }, 5000);
+      }
+
+      function handleImageUpload(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            userImage = img;
+            uploadArea.innerHTML =
+              '<div class="upload-icon">✅</div><div class="upload-text">Foto carregada!</div><div class="upload-subtext">Clique para trocar</div>';
+            checkCanGenerate();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // ========================================
+      // 🎨 SISTEMA PHOTOSHOP INTELIGENTE
+      // ========================================
+      function calculatePhotoshopFontSize(
+        ctx,
+        lines,
+        containerWidth,
+        containerHeight
+      ) {
+        // Container com margem de segurança
+        const safeWidth = containerWidth * CONTAINER_SAFETY_MARGIN;
+        const safeHeight = containerHeight * CONTAINER_SAFETY_MARGIN;
+
+        let bestFontSize = BASE_FONT_SIZE;
+        let bestLineHeight = 0;
+        let bestTotalHeight = 0;
+
+        // Testar diferentes tamanhos de fonte
+        for (
+          let fontSize = MIN_FONT_SIZE;
+          fontSize <= MAX_FONT_SIZE;
+          fontSize += 2
+        ) {
+          // Calcular margens automáticas baseadas na fonte
+          const autoMargin = fontSize * AUTO_MARGIN_RATIO;
+          const effectiveWidth = safeWidth - autoMargin * 2;
+          const effectiveHeight = safeHeight - autoMargin * 2;
+
+          // Line height proporcional à fonte
+          const lineHeight = fontSize * LINE_HEIGHT_RATIO;
+          const totalHeight = lines.length * lineHeight;
+
+          // Verificar se cabe na altura
+          if (totalHeight > effectiveHeight) continue;
+
+          // Verificar se todas as linhas cabem na largura
+          let allLinesFit = true;
+          ctx.font = `${fontSize}px "${TEXT_FONT}", Arial Black, sans-serif`;
+
+          for (const line of lines) {
+            // Espaçamento automático entre letras (proporcional à fonte)
+            const letterSpacing = fontSize * LETTER_SPACING_RATIO;
+            const spacedText = line.text
+              .split("")
+              .join(" ".repeat(Math.max(1, Math.round(letterSpacing))));
+            const textWidth = ctx.measureText(spacedText).width;
+
+            if (textWidth > effectiveWidth) {
+              allLinesFit = false;
+              break;
+            }
+          }
+
+          // Se tudo cabe, este é um candidato válido
+          if (allLinesFit) {
+            bestFontSize = fontSize;
+            bestLineHeight = lineHeight;
+            bestTotalHeight = totalHeight;
+          }
+        }
+
+        return {
+          fontSize: bestFontSize,
+          lineHeight: bestLineHeight,
+          totalHeight: bestTotalHeight,
+          autoMargin: bestFontSize * AUTO_MARGIN_RATIO,
+          letterSpacing: bestFontSize * LETTER_SPACING_RATIO,
+        };
+      }
+
+      // Gerar arte
+      generateBtn.addEventListener("click", () => {
+        if (!userImage || !templateImg) return;
+
+        loading.style.display = "block";
+        generateBtn.style.display = "none";
+
+        // Configurar canvas
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        // Limpar canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
+        // ========================================
+        // 📸 CAMADA 1: FOTO DO USUÁRIO (POR TRÁS)
+        // ========================================
+        if (userImage) {
+          // Calcular crop centralizado
+          let srcX = 0,
+            srcY = 0,
+            srcSize = 0;
+
+          if (userImage.width > userImage.height) {
+            // Imagem horizontal - cortar laterais
+            srcSize = userImage.height;
+            srcX = (userImage.width - userImage.height) / 2;
+            srcY = 0;
+          } else if (userImage.height > userImage.width) {
+            // Imagem vertical - cortar topo/base
+            srcSize = userImage.width;
+            srcX = 0;
+            srcY = (userImage.height - userImage.width) / 2;
+          } else {
+            // Imagem quadrada
+            srcSize = userImage.width;
+            srcX = 0;
+            srcY = 0;
+          }
+
+          // Desenhar foto centrada no círculo (SEM máscara - fica por trás)
+          const destSize = PHOTO_RADIUS * 2;
+          const destX = PHOTO_CENTER_X - PHOTO_RADIUS;
+          const destY = PHOTO_CENTER_Y - PHOTO_RADIUS;
+
+          ctx.drawImage(
+            userImage,
+            srcX,
+            srcY,
+            srcSize,
+            srcSize,
+            destX,
+            destY,
+            destSize,
+            destSize
+          );
+        }
+
+        // ========================================
+        // 🎭 CAMADA 2: MOCKUP COM FURO (MÁSCARA)
+        // ========================================
+        ctx.drawImage(templateImg, 0, 0);
+
+        // ========================================
+        // 📝 CAMADA 3: TEXTO COM SISTEMA PHOTOSHOP
+        // ========================================
+        const text = infoText.value.trim();
+        if (text) {
+          ctx.save();
+          ctx.fillStyle = TEXT_COLOR;
+          ctx.textBaseline = "middle";
+
+          const lines = text.split("\n").map((line) => line.trim());
+
+          // Preparar linhas do usuário
+          const preparedLines = [];
+          let userLineCount = 0;
+
+          lines.forEach((line) => {
+            if (line.trim() === "") return;
+
+            let finalText = line.toUpperCase();
+
+            if (userLineCount === 0) {
+              // Primeira linha: Nome (máx. 2 palavras)
+              const words = finalText.split(" ");
+              if (words.length > 2) {
+                finalText = words.slice(0, 2).join(" ");
+              }
+              preparedLines.push({ text: finalText, isPhone: false });
+            } else if (userLineCount === 1) {
+              // Segunda linha: Cidade
+              preparedLines.push({ text: finalText, isPhone: false });
+            } else if (userLineCount === 2) {
+              // Terceira linha: Telefone
+              const isPhone = /\(?\d{2}\)?\s?\d{4,5}[-\s]?\d{4}/.test(line);
+              preparedLines.push({ text: finalText, isPhone: isPhone });
+            }
+
+            userLineCount++;
+          });
+
+          // ========================================
+          // 🎨 SISTEMA PHOTOSHOP: CALCULAR FONTE PERFEITA
+          // ========================================
+          const textMetrics = calculatePhotoshopFontSize(
+            ctx,
+            preparedLines,
+            TEXT_CONTAINER_WIDTH,
+            TEXT_CONTAINER_HEIGHT
+          );
+
+          // ========================================
+          // 📍 SISTEMA DE ALINHAMENTO INTELIGENTE
+          // ========================================
+          let startY = TEXT_Y;
+
+          // Alinhamento vertical
+          if (TEXT_VERTICAL_ALIGN === "top") {
+            startY =
+              TEXT_Y + textMetrics.autoMargin + textMetrics.lineHeight / 2;
+          } else if (TEXT_VERTICAL_ALIGN === "center") {
+            const containerCenter = TEXT_Y + TEXT_CONTAINER_HEIGHT / 2;
+            startY =
+              containerCenter -
+              textMetrics.totalHeight / 2 +
+              textMetrics.lineHeight / 2;
+          } else if (TEXT_VERTICAL_ALIGN === "bottom") {
+            startY =
+              TEXT_Y +
+              TEXT_CONTAINER_HEIGHT -
+              textMetrics.autoMargin -
+              textMetrics.totalHeight +
+              textMetrics.lineHeight / 2;
+          }
+
+          // Aplicar offset vertical
+          startY += TEXT_VERTICAL_OFFSET;
+
+          // Calcular X base
+          let baseX = TEXT_CENTER_X;
+
+          // Alinhamento horizontal
+          if (TEXT_HORIZONTAL_ALIGN === "left") {
+            baseX =
+              TEXT_CENTER_X - TEXT_CONTAINER_WIDTH / 2 + textMetrics.autoMargin;
+            ctx.textAlign = "left";
+          } else if (TEXT_HORIZONTAL_ALIGN === "center") {
+            baseX = TEXT_CENTER_X;
+            ctx.textAlign = "center";
+          } else if (TEXT_HORIZONTAL_ALIGN === "right") {
+            baseX =
+              TEXT_CENTER_X + TEXT_CONTAINER_WIDTH / 2 - textMetrics.autoMargin;
+            ctx.textAlign = "right";
+          }
+
+          // Aplicar offset horizontal
+          baseX += TEXT_HORIZONTAL_OFFSET;
+
+          let currentY = startY;
+
+          // ========================================
+          // ✍️ DESENHAR TEXTO COM QUALIDADE PHOTOSHOP
+          // ========================================
+          preparedLines.forEach((lineInfo) => {
+            // Configurar fonte otimizada
+            ctx.font = `${textMetrics.fontSize}px "${TEXT_FONT}", Arial Black, sans-serif`;
+
+            // Espaçamento automático entre letras (sistema Photoshop)
+            const spacingChars = Math.max(
+              1,
+              Math.round(textMetrics.letterSpacing)
+            );
+            const spacedText = lineInfo.text
+              .split("")
+              .join(" ".repeat(spacingChars));
+
+            // Desenhar ícone do WhatsApp se for telefone
+            if (lineInfo.isPhone && whatsappIcon && whatsappIcon.complete) {
+              const iconSize = textMetrics.fontSize * 0.8;
+              let iconX = baseX;
+
+              if (TEXT_HORIZONTAL_ALIGN === "center") {
+                const textWidth = ctx.measureText(spacedText).width;
+                iconX = baseX - textWidth / 2 - iconSize - 15;
+              } else if (TEXT_HORIZONTAL_ALIGN === "left") {
+                iconX = baseX - iconSize - 15;
+              } else if (TEXT_HORIZONTAL_ALIGN === "right") {
+                const textWidth = ctx.measureText(spacedText).width;
+                iconX = baseX - textWidth - iconSize - 15;
+              }
+
+              ctx.drawImage(
+                whatsappIcon,
+                iconX,
+                currentY - iconSize / 2,
+                iconSize,
+                iconSize
+              );
+            }
+
+            // Desenhar texto com qualidade máxima
+            ctx.fillText(spacedText, baseX, currentY);
+
+            // Próxima linha
+            currentY += textMetrics.lineHeight;
+          });
+
+          ctx.restore();
+        }
+
+        // Mostrar resultado
+        loading.style.display = "none";
+        preview.style.display = "block";
+        buttons.style.display = "block";
+      });
+
+      // Download
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+        const link = document.createElement("a");
+        const date = new Date();
+        const timestamp = `${date.getFullYear()}${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${date
+          .getHours()
+          .toString()
+          .padStart(2, "0")}${date.getMinutes().toString().padStart(2, "0")}`;
+        link.download = `origins-${timestamp}.png`;
+        link.href = canvas.toDataURL("image/png", 1.0);
+        link.click();
+      });
+
+      // Nova arte
+      document.getElementById("newArtBtn").addEventListener("click", () => {
+        fileInput.value = "";
+        infoText.value = "";
+        userImage = null;
+        uploadArea.innerHTML =
+          '<div class="upload-icon">📸</div><div class="upload-text">Clique ou arraste sua foto aqui</div><div class="upload-subtext">Formatos aceitos: JPG, PNG, WEBP</div>';
+        preview.style.display = "none";
+        buttons.style.display = "none";
+        generateBtn.style.display = "block";
+        generateBtn.disabled = true;
+      });
+    </script>
+  </body>
+</html>
